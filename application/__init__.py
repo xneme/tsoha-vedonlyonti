@@ -14,6 +14,12 @@ else:
 
 db = SQLAlchemy(app)
 
+# salasanojen kryptaus
+from flask_bcrypt import Bcrypt
+app.config["BCRYPT_LOG_ROUNDS"] = 12
+
+bcrypt = Bcrypt(app)
+
 # sovelluksen toiminnallisuudet
 from application import views
 
@@ -26,6 +32,7 @@ from application.auth import views
 # kirjautuminen
 from application.auth.models import User
 from os import urandom
+
 app.config["SECRET_KEY"] = urandom(32)
 
 from flask_login import LoginManager
