@@ -11,13 +11,14 @@ class User(db.Model):
     name = db.Column(db.String(144), nullable=False)
     username = db.Column(db.String(144), nullable=False)
     password = db.Column(db.String(144), nullable=False)
-
+    email = db.Column(db.String(144), nullable=False)
     tasks = db.relationship("Task", backref='account', lazy=True)
 
-    def __init__(self, name, username, password):
+    def __init__(self, name, username, password, email):
         self.name = name
         self.username = username
         self.password = password
+        self.email = email
 
     def get_id(self):
         return self.id
