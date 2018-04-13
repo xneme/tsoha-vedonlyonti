@@ -47,7 +47,7 @@ class User(Base):
     def find_users_with_no_tasks():
         stmt = text("SELECT Account.id, Account.name FROM Account"
                     " LEFT JOIN Task ON Task.account_id = Account.id"
-                    " WHERE (Task.done IS null OR Task.done = 1)"
+                    " WHERE (Task.done IS null OR Task.done = true)"
                     " GROUP BY Account.id"
                     " HAVING COUNT(Task.id) = 0")
         res = db.engine.execute(stmt)
