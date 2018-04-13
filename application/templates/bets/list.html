@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block body %}
+{% if open_events is defined %}
+<p>
+    Events open for betting:
+</p>
+<ul>
+    {% for event in open_events %}
+    <li><a href="/bets/{{ event.id }}/">{{ event.name }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>
+    No open events.
+</p>
+{% endif %}
+
+{% if suggested_events is defined %}
+<p>
+    Suggestions for new betting events:
+</p>
+<ul>
+    {% for event in suggested_events %}
+    <li><a href="/bets/{{ event.id }}/">{{ event.name }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>
+    No suggestions.
+</p>
+{% endif %}
+{% endblock %}

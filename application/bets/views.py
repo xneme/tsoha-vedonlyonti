@@ -2,40 +2,69 @@ from flask import render_template, request, redirect, url_for
 from flask_login import login_required, current_user
 
 from application import app, db
-from application.tasks.models import Task
-from application.tasks.forms import TaskForm
+from application.bets.models import Event, Bet, Comment
+from application.bets.forms import EventForm, CommentForm, BetForm
+
 
 @app.route("/bets/", methods=["GET"])
-def tasks_index():
-    return render_template("bets/list.html", tasks = Task.query.all())
+def list_events():
+    return render_template("bets/list.html", open_events = Event.query.all(), suggested_events = Event.query.all())
 
-@app.route("/bets/newcontest/")
+
+@app.route("/bets/newevent/", methods=["GET", "POST"])
 @login_required
-def tasks_form():
-    return render_template("bets/newcontest.html", form = TaskForm())
+def create_event():
+    if request.method == "GET":
+        return render_template("bets/newevent.html", form = EventForm())
 
-@app.route("/bets/<contest_id>/", methods=["GET"])
-@login_required
-def tasks_set_done(task_id):
-    t = Task.query.get(task_id)
-    t.done = True
-    db.session().commit()
-
-    return redirect(url_for("tasks_index"))
-
-@app.route("/tasks/", methods=["POST"])
-@login_required
-def tasks_create():
-    form = TaskForm(request.form)
+    form = EventForm(request.form)
 
     if not form.validate():
-        return render_template("tasks/new.html", form = form)
+        return render_template("bets/newevent.html", form = form)
 
-    t = Task(form.name.data)
-    t.done = form.done.data
-    t.account_id = current_user.id
+    e = Event(form.name.data, form.description.data, current_user.id)
+    e.approved = False
+    db.session().add(e)
+    db.session().commit()
+    # TODO toimiiko current_user.id?
+    return redirect(url_for("list_events"))
 
-    db.session().add(t)
+
+@app.route("/bets/<event_id>/", methods=["GET"])
+def show_contest(event_id):
+    return render_template("bets/event.html", event = Event.query.get(event_id), comments = Comment.query.all(), form = CommentForm())
+
+
+@app.route("/bets/<event_id>/", methods=["POST"])
+@login_required
+def comment(event_id):
+    form = CommentForm(request.form)
+
+    if not form.validate():
+        return render_template("bets/event.html", event = Event.query.get(event_id), comments = Comment.query.all(), form = form)
+
+    c = Comment(form.text.data)
+    c.like = form.like.data
+    c.event_id = event_id
+    c.account_id = current_user.id
+    db.session().add(c)
     db.session().commit()
 
-    return redirect(url_for("tasks_index"))
+    return render_template("bets/event.html", event = Event.query.get(event_id), comments = Comment.query.all(), form = CommentForm())
+
+
+@app.route("/bets/<event_id>/delete/", methods=["POST"])
+@login_required
+def delete_event(event_id):
+
+    db.session().delete(Event.query.get(event_id))
+    db.session().commit()
+
+    return redirect(url_for("list_events"))
+
+
+@app.route("/bets/<event_id>/bet/", methods=["POST"])
+def bet(event_id):
+    # TODO vedon asetus
+    return render_template("bets/event.html", event = Event.query.get(event_id))
+

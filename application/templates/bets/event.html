@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h3>{{ event.name }}</h3>
+<p>{{ event.description }}</p>
+<form method="POST" action="{{ url_for('comment', event_id=event.id) }}">    
+    <table>
+        <tr>
+            <td>
+                {{ form.text.label }}
+            </td>
+            <td>
+                {{ form.text }}
+            </td>
+            <td>
+                <ul>
+                    {% for error in form.text.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form.like.label }}
+            </td>
+            <td>
+                {{ form.like }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <input type="submit" value="Comment"\>
+            </td>
+        </tr>
+    </table>
+</form>
+<ul>
+    {% for comment in comments %}
+        <li>{{ comment.text }}</li>
+    {% endfor %}
+</ul>
+<form method="POST" action="{{ url_for('delete_event', event_id=event.id) }}">
+    <input type="submit" value="DELETE EVENT"\>
+</form>
+{% endblock %}
+
