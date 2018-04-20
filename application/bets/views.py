@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for
-from flask_login import login_required, current_user
+from flask_login import current_user
 
-from application import app, db
+from application import app, db, login_required
 from application.bets.models import Event, Bet, Comment
 from application.bets.forms import EventForm, CommentForm, BetForm
 
@@ -12,7 +12,7 @@ def list_events():
 
 
 @app.route("/bets/newevent/", methods=["GET", "POST"])
-@login_required
+@login_required(role="ANY")
 def create_event():
     if request.method == "GET":
         return render_template("bets/newevent.html", form = EventForm())
@@ -36,7 +36,7 @@ def show_contest(event_id):
 
 
 @app.route("/bets/<event_id>/", methods=["POST"])
-@login_required
+@login_required(role="ANY")
 def comment(event_id):
     form = CommentForm(request.form)
 
@@ -54,7 +54,7 @@ def comment(event_id):
 
 
 @app.route("/bets/<event_id>/delete/", methods=["POST"])
-@login_required
+@login_required(role="SUPERADMIN")
 def delete_event(event_id):
 
     db.session().delete(Event.query.get(event_id))
