@@ -57,8 +57,8 @@ def comment(event_id):
 @login_required(role="ADMIN")
 def delete_event(event_id):
 
-    db.session().delete(Event.query.get(event_id))
     db.session().delete(Comment.query.filter_by(event_id = event_id))
+    db.session().delete(Event.query.get(event_id))
     db.session().commit()
 
     return redirect(url_for("list_events"))
