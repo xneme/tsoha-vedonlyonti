@@ -5,6 +5,58 @@
 
 <p>{{ event.description }}</p>
 </br></br>
+
+{% if not event.approved %}
+{% if event.account_id == current_user.id or "ADMIN" in current_user.roles %}
+<p>Add a participant from list:</p>
+<ul>
+{% for participant in participants %}
+    <li>{{ participant.name }}</li>
+{% endfor %}
+</ul>
+<p>Or add a new one:</p>
+<form method="POST" action="{{ url_for('add_participant', event_id=event.id) }}">    
+    <table>
+        <tr>
+            <td>
+                {{ pform.name.label }}
+            </td>
+            <td>
+                {{ pform.name }}
+            </td>
+            <td>
+                <ul>
+                    {% for error in pform.name.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ pform.description.label }}
+            </td>
+            <td>
+                {{ pform.description }}
+            </td>
+            <td>
+                <ul>
+                    {% for error in pform.description.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+            <td>
+                <input type="submit" value="Add participant"\>
+            </td>
+        </tr>
+    </table>
+</form>
+
+{% endif %}
+</br></br>
+<p>Opinions about this event</p>
 <ul>
     {% for comment in comments %}
         <li>
@@ -50,17 +102,17 @@
 
 {% if "ADMIN" in current_user.roles %}
 
-{% if not event.approved %}
 </br>
 <form method="POST" action="{{ url_for('approve_event', event_id=event.id) }}">
     <input type="submit" value="APPROVE EVENT"\>
 </form>
-{% endif %}
 
 </br>
 <form method="POST" action="{{ url_for('delete_event', event_id=event.id) }}">
     <input type="submit" value="DELETE EVENT"\>
 </form>
+
+{% endif %}
 {% endif %}
 
 {% endblock %}

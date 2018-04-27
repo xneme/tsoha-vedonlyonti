@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, StringField, RadioField, validators
+from wtforms import BooleanField, StringField, RadioField, TextAreaField, validators
 
 
 class BetForm(FlaskForm):
@@ -22,7 +22,16 @@ class CommentForm(FlaskForm):
 
 class EventForm(FlaskForm):
     name = StringField("Name", [validators.Length(min=2)])
-    description = StringField("Description")
+    description = TextAreaField("Description")
+
+
+    class Meta:
+        csrf = False
+
+
+class ParticipantForm(FlaskForm):
+    name = StringField("Name", [validators.Length(min=2)])
+    description = TextAreaField("Description")
 
 
     class Meta:
