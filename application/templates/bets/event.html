@@ -4,16 +4,34 @@
 <h3>{{ event.name }}</h3>
 
 <p>{{ event.description }}</p>
-</br></br>
-
-{% if not event.approved %}
-{% if event.account_id == current_user.id or "ADMIN" in current_user.roles %}
-<p>Add a participant from list:</p>
+<p>Participants:</p>
 <ul>
 {% for participant in participants %}
     <li>{{ participant.name }}</li>
 {% endfor %}
 </ul>
+</br></br>
+
+{% if not event.approved %}
+{% if event.account_id == current_user.id or "ADMIN" in current_user.roles %}
+<p>Add a participant from list:</p>
+<form method="POST" action="{{ url_for('add_eventparticipant', event_id=event.id) }}">    
+    <table>
+        <tr>
+            <td>
+                {{ epform.participant_id.label }}
+            </td>
+            <td>
+                {{ epform.participant_id }}
+            </td>
+        </tr>
+            <td>
+                <input type="submit" value="Add participant to event"\>
+            </td>
+        </tr>
+    </table>
+</form>
+</br></br>
 <p>Or add a new one:</p>
 <form method="POST" action="{{ url_for('add_participant', event_id=event.id) }}">    
     <table>
@@ -48,7 +66,7 @@
             </td>
         </tr>
             <td>
-                <input type="submit" value="Add participant"\>
+                <input type="submit" value="Add new participant"\>
             </td>
         </tr>
     </table>
