@@ -1,9 +1,10 @@
 from flask import render_template, request, redirect, url_for
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 
-from application import app, db
+from application import app, db, login_required
 from application.auth.models import User
 from application.auth.forms import LoginForm, RegisterForm
+
 
 @app.route("/auth/register", methods = ["GET", "POST"])
 def auth_register():
@@ -23,6 +24,7 @@ def auth_register():
     # TODO: viesti muuten kuin errorin kautta?
     return render_template("auth/loginform.html", form = LoginForm(), error = "Account created successfully.")
 
+
 @app.route("/auth/login", methods = ["GET", "POST"])
 def auth_login():
     if request.method == "GET":
@@ -41,7 +43,23 @@ def auth_login():
     login_user(user)
     return redirect(url_for("index"))
 
+
 @app.route("/auth/logout")
 def auth_logout():
     logout_user()
     return redirect(url_for("index"))
+
+
+@app.route("/auth/account/", methods = ["GET", "POST"])
+@login_required(role="ANY")
+def my_account():
+    if request.method == "GET":
+        return render_template("auth/account.html", user = current_user)
+
+
+@app.route("/auth/list/", methods = ["GET"])
+@login_required(role="ADMIN")
+def list_users():
+    if request.method == "GET":
+        return render_template("auth/list_users.html", users = User.query.all())
+

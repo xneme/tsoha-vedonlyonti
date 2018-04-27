@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<table>
+    <tr>
+        <td>
+            Username:
+        </td>
+        <td>
+            {{ user.username }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Name:
+        </td>
+        <td>
+            {{ user.name }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Email:
+        </td>
+        <td>
+            {{ user.email }}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Balance:
+        </td>
+        <td>
+            {{ user.balance }}
+        </td>
+    </tr>
+
+{% endblock %}
+
