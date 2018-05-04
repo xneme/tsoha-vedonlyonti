@@ -7,7 +7,7 @@
 </p>
 <ul>
     {% for event in open_events %}
-    <li><a href="/bets/{{ event.id }}/">{{ event.name }}</a></li>
+    <li><a href="/bets/{{ event.id }}/bet/">{{ event.name }}</a></li>
     {% endfor %}
 </ul>
 {% else %}

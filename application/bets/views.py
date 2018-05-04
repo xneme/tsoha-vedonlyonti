@@ -138,8 +138,18 @@ def add_eventparticipant(event_id):
     return render_template("bets/eventparticipant.html", event = Event.query.get(event_id), comments = Comment.query.filter_by(event_id = event_id), form = CommentForm(), participants = Participant.query.all(), pform = ParticipantForm(), epform = epform)
 
 
-@app.route("/bets/<event_id>/bet/", methods=["POST"])
+@app.route("/bets/<event_id>/bet/", methods=["GET", "POST"])
+@login_required(role="ANY")
 def bet(event_id):
+    bform = BetForm()
+    bform.participant.choices = [(p.id, p.name) for p in Event.query.get(event_id).participants]
+    if request.method == "GET":
+        return render_template("bets/eventbet.html", event = Event.query.get(event_id), form = bform)
     # TODO vedon asetus
-    return render_template("bets/event.html", event = Event.query.get(event_id))
+    
+    form = BetForm(request.form)
+    b = Bet(form.amount.data, current_user.id, event_id, form.participant.data)
+    db.session().add(b)
+    db.session().commit()
+    return render_template("bets/eventbet.html", event = Event.query.get(event_id), form = bform)
 

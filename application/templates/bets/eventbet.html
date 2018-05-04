@@ -4,16 +4,9 @@
 <h3>{{ event.name }}</h3>
 <p>Betting time:{{ event.date_start }} - {{ event.date_end }}</p>
 <p>{{ event.description }}</p>
-<p>Participants:</p>
-<ul>
-{% for participant in participants %}
-    <li>{{ participant.name }}</li>
-{% endfor %}
-</ul>
 </br></br>
 
-<p>Add a participant from list:</p>
-<form method="POST" action="{{ url_for('add_eventparticipant', event_id=event.id) }}">    
+<form method="POST" action="{{ url_for('bet', event_id=event.id) }}">    
     <table>
         <tr>
             <td>
@@ -32,7 +25,7 @@
             </td>
             <td>
                 <ul>
-                    {% for error in pform.description.errors %}
+                    {% for error in form.amount.errors %}
                     <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
