@@ -34,6 +34,36 @@
             </td>
         </tr>
         <tr>
+            <td>
+                {{ form.date_start.label }}
+            </td>
+            <td>
+                {{ form.date_start }}
+            </td>
+            <td>
+                <ul>
+                    {% for error in form.date_start.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form.date_end.label }}
+            </td>
+            <td>
+                {{ form.date_end }}
+            </td>
+            <td>
+                <ul>
+                    {% for error in form.date_end.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        <tr>
             <td colspan="3">
                 <input type="submit" value="Suggest a new event"/>
             </td>

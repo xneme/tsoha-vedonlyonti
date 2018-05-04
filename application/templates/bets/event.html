@@ -2,7 +2,7 @@
 
 {% block body %}
 <h3>{{ event.name }}</h3>
-
+<p>Betting time:{{ event.date_start }} - {{ event.date_end }}</p>
 <p>{{ event.description }}</p>
 <p>Participants:</p>
 <ul>
@@ -10,82 +10,24 @@
     <li>{{ participant.name }}</li>
 {% endfor %}
 </ul>
-</br></br>
 
 {% if not event.approved %}
 {% if event.account_id == current_user.id or "ADMIN" in current_user.roles %}
-<p>Add a participant from list:</p>
-<form method="POST" action="{{ url_for('add_eventparticipant', event_id=event.id) }}">    
-    <table>
-        <tr>
-            <td>
-                {{ epform.participant_id.label }}
-            </td>
-            <td>
-                {{ epform.participant_id }}
-            </td>
-        </tr>
-            <td>
-                <input type="submit" value="Add participant to event"\>
-            </td>
-        </tr>
-    </table>
-</form>
-</br></br>
-<p>Or add a new one:</p>
-<form method="POST" action="{{ url_for('add_participant', event_id=event.id) }}">    
-    <table>
-        <tr>
-            <td>
-                {{ pform.name.label }}
-            </td>
-            <td>
-                {{ pform.name }}
-            </td>
-            <td>
-                <ul>
-                    {% for error in pform.name.errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                {{ pform.description.label }}
-            </td>
-            <td>
-                {{ pform.description }}
-            </td>
-            <td>
-                <ul>
-                    {% for error in pform.description.errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            </td>
-        </tr>
-            <td>
-                <input type="submit" value="Add new participant"\>
-            </td>
-        </tr>
-    </table>
-</form>
-
+<a href="{{ url_for("event_participants", event_id = event.id) }}">Edit participants</a>
 {% endif %}
 </br></br>
 <p>Opinions about this event</p>
 <ul>
     {% for comment in comments %}
         <li>
-            <div>
+            <span>
             {{ comment.text }}
             {% if "ADMIN" in current_user.roles or comment.account_id == current_user.id %}
             <form method="POST" action="{{ url_for('delete_comment', event_id=event.id, comment_id=comment.id) }}">
-                <input type="submit" value="delete"\>
+                <input type="submit" value="delete" class="btn btn-link">
             </form>
             {% endif %}
-            </div>
+            </span>
         </li>
     {% endfor %}
 </ul>
@@ -120,14 +62,14 @@
 
 {% if "ADMIN" in current_user.roles %}
 
-</br>
+</br></br>
 <form method="POST" action="{{ url_for('approve_event', event_id=event.id) }}">
-    <input type="submit" value="APPROVE EVENT"\>
+    <input type="submit" value="APPROVE EVENT" class="btn btn-success"\>
 </form>
 
 </br>
 <form method="POST" action="{{ url_for('delete_event', event_id=event.id) }}">
-    <input type="submit" value="DELETE EVENT"\>
+    <input type="submit" value="DELETE EVENT" class="btn btn-danger"\>
 </form>
 
 {% endif %}

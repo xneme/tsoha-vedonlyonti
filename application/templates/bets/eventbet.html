@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h3>{{ event.name }}</h3>
+<p>Betting time:{{ event.date_start }} - {{ event.date_end }}</p>
+<p>{{ event.description }}</p>
+<p>Participants:</p>
+<ul>
+{% for participant in participants %}
+    <li>{{ participant.name }}</li>
+{% endfor %}
+</ul>
+</br></br>
+
+<p>Add a participant from list:</p>
+<form method="POST" action="{{ url_for('add_eventparticipant', event_id=event.id) }}">    
+    <table>
+        <tr>
+            <td>
+                {{ form.participant.label }}
+            </td>
+            <td>
+                {{ form.participant }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form.amount.label }}
+            </td>
+            <td>
+                {{ form.amount }}
+            </td>
+            <td>
+                <ul>
+                    {% for error in pform.description.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" value="Bet!" class="btn btn-primary"\>
+            </td>
+        </tr>
+    </table>
+</form>
+</br>
+<a href="{{ url_for("list_events") }}">Back to event list</a>
+
+
+{% endblock %}
+

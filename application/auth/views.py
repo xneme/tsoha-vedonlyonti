@@ -50,16 +50,23 @@ def auth_logout():
     return redirect(url_for("index"))
 
 
-@app.route("/auth/account/", methods = ["GET", "POST"])
+@app.route("/auth/account", methods = ["GET", "POST"])
 @login_required(role="ANY")
 def my_account():
     if request.method == "GET":
         return render_template("auth/account.html", user = current_user)
 
 
-@app.route("/auth/list/", methods = ["GET"])
+@app.route("/auth/list", methods = ["GET"])
 @login_required(role="ADMIN")
 def list_users():
     if request.method == "GET":
         return render_template("auth/list_users.html", users = User.query.all())
+
+
+@app.route("/auth/user/<user_id>", methods = ["GET", "POST"])
+@login_required(role="ADMIN")
+def view_user(user_id):
+    if request.method == "GET":
+        return render_template("auth/account.html", user = User.query.get(user_id))
 

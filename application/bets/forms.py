@@ -1,10 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, StringField, SelectField, RadioField, TextAreaField, validators
+from wtforms import BooleanField, IntegerField, StringField, SelectField, RadioField, TextAreaField, validators
+from wtforms.fields.html5 import DateField
 
 
 class BetForm(FlaskForm):
-    amount = StringField("Name", [validators.Length(min=2)])
-    guess = RadioField("Quess:", choices=[('with', 'betting with'),('against', 'betting against')])
+    amount = IntegerField("Amount")
+    participant = SelectField("Who is going to win?", coerce=int)
 
 
     class Meta:
@@ -23,6 +24,8 @@ class CommentForm(FlaskForm):
 class EventForm(FlaskForm):
     name = StringField("Name", [validators.Length(min=2)])
     description = TextAreaField("Description")
+    date_start = DateField("Betting starts", format="%Y-%m-%d")
+    date_end = DateField("Betting ends", format="%Y-%m-%d")
 
 
     class Meta:

@@ -24,6 +24,8 @@ def create_event():
 
     e = Event(form.name.data, form.description.data, current_user.id)
     e.approved = False
+    e.date_start = form.date_start.data
+    e.date_end = form.date_end.data
     db.session().add(e)
     db.session().commit()
     # TODO toimiiko current_user.id?
@@ -35,6 +37,15 @@ def show_contest(event_id):
     epform = EventParticipantForm()
     epform.participant_id.choices = [(p.id, p.name) for p in Participant.query.order_by('name')]
     return render_template("bets/event.html", event = Event.query.get(event_id), comments = Comment.query.filter_by(event_id = event_id), form = CommentForm(), participants = Event.query.get(event_id).participants, pform = ParticipantForm(), epform = epform)
+
+
+@app.route("/bets/<event_id>/participants/", methods=["GET", "POST"])
+@login_required(role="ANY")
+def event_participants(event_id):
+    if request.method == "GET":
+        epform = EventParticipantForm()
+        epform.participant_id.choices = [(p.id, p.name) for p in Participant.query.order_by('name')]
+        return render_template("bets/eventparticipants.html", event = Event.query.get(event_id), participants = Event.query.get(event_id).participants, pform = ParticipantForm(), epform = epform)
 
 
 @app.route("/bets/<event_id>/comment/", methods=["POST"])
@@ -61,7 +72,7 @@ def comment(event_id):
 @login_required(role="ADMIN")
 def delete_event(event_id):
 
-    db.session().delete(Comment.query.filter_by(event_id = event_id))
+#    db.session().delete(Comment.query.filter_by(event_id = event_id))
     db.session().delete(Event.query.get(event_id))
     db.session().commit()
 
@@ -101,15 +112,14 @@ def add_participant(event_id):
     epform.participant_id.choices = [(p.id, p.name) for p in Participant.query.order_by('name')]
 
     if not form.validate():
-        return render_template("bets/event.html", event = Event.query.get(event_id), comments = Comment.query.filter_by(event_id = event_id), form = CommentForm(), participants = Participant.query.all(), pform = form, epform = epform)
+        return render_template("bets/eventparticipants.html", event = Event.query.get(event_id), participants = Event.query.get(event_id).participants, pform = form, epform = epform)
 
     p = Participant(form.name.data, form.description.data)
     e = Event.query.get(event_id)
     e.participants.append(p)
     db.session().add(e)
     db.session().commit()
-    # TODO lisää myös eventtiin
-    return render_template("bets/event.html", event = Event.query.get(event_id), comments = Comment.query.filter_by(event_id = event_id), form = CommentForm(), participants = Participant.query.all(), pform = ParticipantForm(), epform = epform)
+    return render_template("bets/eventparticipants.html", event = Event.query.get(event_id), participants = Event.query.get(event_id).participants, pform = ParticipantForm(), epform = epform)
 
 
 @app.route("/bets/add_eventparticipant/<event_id>", methods=["POST"])
@@ -125,7 +135,7 @@ def add_eventparticipant(event_id):
     # TODO lisää myös eventtiin
     epform = EventParticipantForm()
     epform.participant_id.choices = [(p.id, p.name) for p in Participant.query.order_by('name')]
-    return render_template("bets/event.html", event = Event.query.get(event_id), comments = Comment.query.filter_by(event_id = event_id), form = CommentForm(), participants = Participant.query.all(), pform = ParticipantForm(), epform = epform)
+    return render_template("bets/eventparticipant.html", event = Event.query.get(event_id), comments = Comment.query.filter_by(event_id = event_id), form = CommentForm(), participants = Participant.query.all(), pform = ParticipantForm(), epform = epform)
 
 
 @app.route("/bets/<event_id>/bet/", methods=["POST"])
